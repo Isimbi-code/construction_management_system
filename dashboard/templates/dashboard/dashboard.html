@@ -1,0 +1,109 @@
+{% extends 'dashboard/base.html' %}
+{% load static %}
+
+{% block content %}
+<div class="bg-neutral-100 min-h-screen p-8">
+    <h1 class="text-3xl font-bold mb-6">Welcome, {{ user.username }}</h1>
+
+    <!-- Overview Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-2">Inventory Items</h2>
+            <p class="text-3xl font-bold text-blue-600">{{ item_count }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-2">Employees</h2>
+            <p class="text-3xl font-bold text-green-600">{{ employee_count }}</p>
+        </div>
+        <div class="bg-white p-6 rounded-lg shadow-md">
+            <h2 class="text-xl font-semibold mb-2">Projects</h2>
+            <p class="text-3xl font-bold text-purple-600">{{ project_count }}</p>
+        </div>
+    </div>
+
+    <!-- Dashboard Stats and Graph -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <canvas id="projectChart" width="400" height="200"></canvas>
+    </div>
+
+    <!-- Recent Items -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Recent Inventory Items</h2>
+        <ul>
+            {% for item in recent_items %}
+            <li class="mb-2">{{ item.name }} - Added on {{ item.created_at|date:"M d, Y" }}</li>
+            {% empty %}
+            <li>No recent items.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Recent Employees -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Recent Employees</h2>
+        <ul>
+            {% for employee in recent_employees %}
+            <li class="mb-2">{{ employee.name }} - Hired on {{ employee.hire_date|date:"M d, Y" }}</li>
+            {% empty %}
+            <li>No recent employees.</li>
+            {% endfor %}
+        </ul>
+    </div>
+
+    <!-- Recent Projects -->
+    <div class="bg-white p-6 rounded-lg shadow-md mb-8">
+        <h2 class="text-2xl font-semibold mb-4">Recent Projects</h2>
+        <ul>
+            {% for project in recent_projects %}
+            <li class="mb-2">{{ project.name }} - Started on {{ project.start_date|date:"M d, Y" }}</li>
+            {% empty %}
+            <li>No recent projects.</li>
+            {% endfor %}
+        </ul>
+    </div>
+</div>
+
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const ctx = document.getElementById('projectChart').getContext('2d');
+        const chartData = JSON.parse('{{ chart_data|safe }}');
+
+        new Chart(ctx, {
+            type: 'bar',
+            data: {
+                labels: chartData.labels,
+                datasets: [{
+                    label: 'Counts',
+                    data: chartData.data,
+                    backgroundColor: [
+                        'rgba(54, 162, 235, 0.6)',
+                        'rgba(75, 192, 192, 0.6)',
+                        'rgba(153, 102, 255, 0.6)'
+                    ],
+                    borderColor: [
+                        'rgba(54, 162, 235, 1)',
+                        'rgba(75, 192, 192, 1)',
+                        'rgba(153, 102, 255, 1)'
+                    ],
+                    borderWidth: 1
+                }]
+            },
+            options: {
+                responsive: true,
+                scales: {
+                    y: {
+                        beginAtZero: true,
+                        max: 10,
+                        ticks: {
+                            stepSize: 1,
+                            precision: 0
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+{% endblock %}

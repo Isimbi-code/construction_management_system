@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Inventory List</title>
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+</head>
+
+<body>
+    </div>
+    <h1>Inventory List</h1>
+    <a href="{% url 'item_create' %}" class="btn">Add New Item</a>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Quantity</th>
+                <th>Unit Price</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in items %}
+            <tr>
+                <td data-label="Name">{{ item.name }}</td>
+                <td data-label="Quantity">{{ item.quantity }}</td>
+                <td data-label="Unit Price">{{ item.unit_price }}</td>
+                <td data-label="Actions">
+                    <a href="{% url 'item_update' item.id %}" class="btn">Edit</a>
+                    <a href="{% url 'item_delete' item.id %}" class="btn">Delete</a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+</body>
+
+</html>
